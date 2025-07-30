@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Dashboard | Borel Sigma Inc.</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500&display=swap');
+        
+        :root {
+            --primary: #000000; --secondary: #1a1a1a; --accent: #0066ff; --danger: #ff3366; --success: #10b981;
+            --warning: #f59e0b; --purple: #8b5cf6; --pink: #ec4899; --gray-100: #f8f9fa; --gray-200: #e9ecef;
+            --gray-300: #dee2e6; --gray-400: #ced4da; --gray-500: #adb5bd; --gray-600: #6c757d; --gray-700: #495057;
+            --gray-800: #343a40; --gray-900: #212529;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 62.5%; scroll-behavior: smooth; }
+        body {
+            font-family: 'Calibri Light', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 300; font-size: 1.2rem; line-height: 1.6; color: var(--primary); background: var(--gray-100);
+            overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+        }
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 60px; background: white;
+            border-bottom: 1px solid var(--gray-200); z-index: 1000; display: flex; align-items: center; padding: 0 2rem;
+        }
+        .top-nav-content { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 1600px; margin: 0 auto; }
+        .brand-section { display: flex; align-items: center; gap: 2rem; }
+        .logo { height: 28px; }
+        .employee-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; background: var(--accent);
+            color: white; border-radius: 2rem; font-size: 1rem;
+        }
+        .nav-actions { display: flex; align-items: center; gap: 2rem; }
+        .user-info { display: flex; align-items: center; gap: 1rem; }
+        .user-avatar {
+            width: 36px; height: 36px; background: var(--accent); color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: 1.2rem;
+        }
+        .user-details { text-align: right; }
+        .user-name { font-size: 1.2rem; font-weight: 400; }
+        .user-role { font-size: 1rem; color: var(--gray-600); }
+        .session-timer {
+            background: var(--gray-100); padding: 0.6rem 1.2rem; border-radius: 2rem; font-size: 1.1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .session-timer .label { color: var(--gray-600); }
+        .session-timer .time { font-weight: 500; font-variant-numeric: tabular-nums; color: var(--accent); }
+        .dashboard-wrapper { display: flex; margin-top: 60px; }
+        .sidebar {
+            width: 260px; background: white; border-right: 1px solid var(--gray-200);
+            min-height: calc(100vh - 60px); position: fixed; padding: 2rem;
+        }
+        .sidebar-nav { list-style: none; }
+        .sidebar-nav li { margin-bottom: 0.5rem; }
+        .sidebar-nav a {
+            display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-radius: 0.4rem;
+            text-decoration: none; color: var(--gray-700); font-size: 1.2rem; transition: all 0.2s ease;
+        }
+        .sidebar-nav a:hover { background: var(--gray-100); color: var(--primary); }
+        .sidebar-nav a.active { background: var(--accent); color: white; }
+        .sidebar-nav svg { width: 18px; height: 18px; }
+        .main-content { margin-left: 260px; width: calc(100% - 260px); padding: 3rem; }
+        .page-header { margin-bottom: 3rem; }
+        .page-header h1 { font-size: 3.2rem; font-weight: 200; margin-bottom: 0.5rem; }
+        .page-header p { font-size: 1.4rem; color: var(--gray-600); }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .kpi-card { background: white; padding: 2rem; border: 1px solid var(--gray-200); border-radius: 0.8rem; transition: all 0.3s ease; }
+        .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .kpi-label { font-size: 1.1rem; color: var(--gray-600); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .kpi-value { font-size: 2.4rem; font-weight: 300; color: var(--primary); margin-bottom: 0.5rem; }
+        .kpi-change { font-size: 1.1rem; display: flex; align-items: center; gap: 0.3rem; }
+        .kpi-change.positive { color: var(--success); }
+        .kpi-change.negative { color: var(--danger); }
+        .card { background: white; border: 1px solid var(--gray-200); border-radius: 0.8rem; overflow: hidden; }
+        .card-header { padding: 2rem 2rem 1rem; border-bottom: 1px solid var(--gray-200); }
+        .card-header h2 { font-size: 1.8rem; font-weight: 400; }
+        .card-body { padding: 2rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { font-size: 1.2rem; font-weight: 400; margin-bottom: 0.5rem; display: block; color: var(--gray-700); }
+        .form-input { width: 100%; padding: 1rem; font-size: 1.2rem; border: 1px solid var(--gray-300); border-radius: 0.4rem; transition: all 0.2s ease; }
+        .form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1); }
+        .file-upload-container { background: var(--gray-100); border: 2px dashed var(--gray-300); padding: 2rem; text-align: center; cursor: pointer; border-radius: 0.4rem; transition: all 0.2s ease; }
+        .file-upload-container:hover { border-color: var(--accent); background: rgba(0, 102, 255, 0.05); }
+        .file-upload-container input[type="file"] { display: none; }
+        #file-name-display { font-size: 1.2rem; margin-top: 1rem; color: var(--accent); font-style: italic;}
+        .btn { padding: 0.8rem 2rem; font-size: 1.1rem; font-weight: 400; border: 1px solid var(--primary); background: transparent; color: var(--primary); cursor: pointer; transition: all 0.2s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 0.8rem; letter-spacing: 0.02em; border-radius: 0.2rem; }
+        .btn:hover { background: var(--primary); color: white; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--secondary); border-color: var(--secondary); }
+        .btn-secondary { background: var(--gray-200); color: var(--primary); border-color: var(--gray-300); }
+        .btn-secondary:hover { background: var(--gray-300); }
+        .button-group { display: flex; gap: 1rem; margin-top: 2rem; }
+        .button-group .btn { flex: 1; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="top-nav-content">
+            <div class="brand-section">
+                <a href="index.html"><img src="BorelLogo.jpg" alt="Borel Sigma Inc Logo" class="logo"></a>
+                <div class="employee-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    Employee Portal
+                </div>
+            </div>
+            <div class="nav-actions">
+                <div class="session-timer">
+                    <span class="label">Session:</span>
+                    <span class="time" id="session-time">00:00:00</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-details">
+                        <div class="user-name" id="user-name">Loading...</div>
+                        <div class="user-role" id="user-role">Team Member</div>
+                    </div>
+                    <div class="user-avatar" id="user-avatar">--</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="team-dashboard.html" class="active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg> <span>Dashboard</span></a></li>
+                    <li><a href="timeline.html"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> <span>Timeline</span></a></li>
+                    <li><a href="my-files.html"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg> <span>My Files</span></a></li>
+                    <li><a href="#"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> <span>Tools</span></a></li>
+                    <li><a href="#"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> <span>Performance</span></a></li>
+                    <li><a href="team-login.html" id="logout-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg> <span>Log Out</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Welcome to Your Dashboard</h1>
+                <p>Hello, <strong id="user-id-header"></strong>. Here's your comprehensive overview and performance metrics.</p>
+            </header>
+            
+            <div class="kpi-grid">
+                </div>
+            <div class="dashboard-grid">
+                </div>
+            
+            <section id="analytics" style="margin-top: 3rem;">
+                </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- THIS SCRIPT FIXES THE LOGOUT ISSUE AND POPULATES USER DETAILS ---
+            const params = new URLSearchParams(window.location.search);
+            
+            // 1. Check if the user is logged in
+            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+                if (!params.has('email')) { // If no session and no email in URL, force login
+                    window.location.href = 'team-login.html';
+                    return;
+                }
+                sessionStorage.setItem('isLoggedIn', 'true'); // Establish session
+            }
+
+            // 2. Dynamically update all sidebar links to carry the session forward
+            const sessionQueryString = params.toString();
+            if (sessionQueryString) {
+                document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                    const originalHref = link.getAttribute('href');
+                    if (originalHref && originalHref !== '#' && !originalHref.startsWith('http') && originalHref !== 'team-login.html') {
+                        link.href = `${originalHref}?${sessionQueryString}`;
+                    }
+                });
+            }
+
+            // 3. Populate User Details throughout the page
+            const email = params.get('email') || 'team.member@borelsigma.inc';
+            const domain = params.get('domain') || 'Not Set';
+            
+            const userName = email.split('@')[0].replace('.', ' ');
+            const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            
+            document.getElementById('user-name').textContent = userName.split(' ').map(n => n.charAt(0).toUpperCase() + n.slice(1)).join(' ');
+            document.getElementById('user-avatar').textContent = initials;
+            document.getElementById('user-role').textContent = domain;
+            document.getElementById('user-id-header').textContent = userName;
+            
+            // --- END OF FIX ---
+
+
+            // The rest of your dashboard script...
+            const SCRIPT_URL = 'PASTE_YOUR_LATEST_WEB_APP_URL_HERE'; 
+            
+            // Your other initializations (timers, charts, file uploads, etc.)
+            // NOTE: I've removed the duplicate variable declarations from your original script
+            const loginTime = params.get('loginTime') || new Date().toLocaleString();
+            const startTime = new Date();
+            const updateTimer = () => {
+                const now = new Date();
+                const diff = now - startTime;
+                const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+                const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+                const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+                if(document.getElementById('session-time')) document.getElementById('session-time').textContent = `${h}:${m}:${s}`;
+            };
+            setInterval(updateTimer, 1000);
+
+            const INACTIVITY_TIMEOUT = 5 * 60 * 1000;
+            let inactivityTimer;
+            const logout = () => { sessionStorage.removeItem('isLoggedIn'); alert('You have been logged out due to inactivity.'); window.location.href = 'team-login.html'; };
+            const resetInactivityTimer = () => { clearTimeout(inactivityTimer); inactivityTimer = setTimeout(logout, INACTIVITY_TIMEOUT); };
+            ['load', 'mousemove', 'mousedown', 'click', 'scroll', 'keypress'].forEach(evt => window.addEventListener(evt, resetInactivityTimer));
+            
+            window.addEventListener('beforeunload', () => sessionStorage.removeItem('isLoggedIn'));
+            document.getElementById('logout-link').addEventListener('click', () => sessionStorage.removeItem('isLoggedIn'));
+        });
+    </script>
+</body>
+</html>

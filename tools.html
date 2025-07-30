@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools & Resources | Borel Sigma Inc.</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500&display=swap');
+        
+        :root {
+            --primary: #000000;
+            --secondary: #1a1a1a;
+            --accent: #0066ff;
+            --danger: #ff3366;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 62.5%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Calibri Light', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 300;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--primary);
+            background: var(--gray-100);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .top-nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            height: 28px;
+        }
+
+        .page-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: var(--accent);
+            color: white;
+            border-radius: 2rem;
+            font-size: 1rem;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-wrapper {
+            display: flex;
+            margin-top: 60px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            min-height: calc(100vh - 60px);
+            position: fixed;
+            padding: 2rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 0.4rem;
+            text-decoration: none;
+            color: var(--gray-700);
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .sidebar-nav svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 3rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 3.2rem;
+            font-weight: 200;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.4rem;
+            color: var(--gray-600);
+        }
+
+        /* Tool Categories */
+        .tool-categories {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 0.8rem 1.5rem;
+            background: white;
+            border: 1px solid var(--gray-300);
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.1rem;
+        }
+
+        .category-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .category-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Tools Grid */
+        .tools-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .tool-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.8rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--primary);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .tool-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            color: white;
+            border-radius: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .tool-name {
+            font-size: 1.6rem;
+            font-weight: 400;
+        }
+
+        .tool-description {
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+
+        .tool-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-features li {
+            font-size: 1.1rem;
+            color: var(--gray-700);
+            padding: 0.3rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .tool-features li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .tool-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            font-size: 1rem;
+            border-radius: 0.3rem;
+            font-weight: 400;
+        }
+
+        .status-active {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-beta {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-coming {
+            background: var(--gray-400);
+            color: white;
+        }
+
+        /* Integration Status */
+        .integration-status {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.8rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .status-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--gray-100);
+            border-radius: 0.4rem;
+        }
+
+        .status-value {
+            font-size: 2.4rem;
+            font-weight: 300;
+            color: var(--accent);
+            display: block;
+        }
+
+        .status-label {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 0.8rem;
+            margin-bottom: 3rem;
+        }
+
+        .quick-actions h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+            border-radius: 0.4rem;
+            transition: all 0.2s ease;
+            font-size: 1.1rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        /* API Documentation */
+        .api-section {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.8rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .api-endpoint {
+            background: var(--gray-100);
+            padding: 1rem;
+            border-radius: 0.4rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 2rem;
+            }
+
+            .tool-categories {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="top-nav-content">
+            <div class="brand-section">
+                <a href="index.html"><img src="BorelLogo.jpg" alt="Borel Sigma Inc Logo" class="logo"></a>
+                <div class="page-indicator">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"/>
+                    </svg>
+                    Tools & Resources
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav>
+                <ul class="sidebar-nav">
+                    <li>
+                        <a href="team-dashboard.html" id="dashboard-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="timeline.html" id="timeline-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>Timeline</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="my-files.html" id="my-files-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                            </svg>
+                            <span>My Files</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="active">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Tools</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="team-login.html" id="logout-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            <span>Log Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <header class="page-header">
+                <h1>Tools & Resources</h1>
+                <p>Access all integrated tools, internal systems, and external platforms from one central hub</p>
+            </header>
+
+            <!-- Integration Status -->
+            <div class="integration-status">
+                <h2 style="font-size: 1.8rem; font-weight: 400; margin-bottom: 1rem;">System Status</h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <span class="status-value">24</span>
+                        <span class="status-label">Active Tools</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-value">99.9%</span>
+                        <span class="status-label">Uptime</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-value">15</span>
+                        <span class="status-label">Integrations</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-value">3.2ms</span>
+                        <span class="status-label">Avg Response</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="action-buttons">
+                    <a href="team-dashboard.html" class="action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline; margin-right: 0.5rem;">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                        </svg>
+                        Go to Dashboard
+                    </a>
+                    <a href="timeline.html" class="action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline; margin-right: 0.5rem;">
+                            <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                        </svg>
+                        View Timeline
+                    </a>
+                    <a href="my-files.html" class="action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline; margin-right: 0.5rem;">
+                            <path d="M10 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2h-8l-2-2z"/>
+                        </svg>
+                        My Files
+                    </a>
+                    <a href="#" onclick="showNewTaskModal()" class="action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline; margin-right: 0.5rem;">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        New Task
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tool Categories -->
+            <div class="tool-categories">
+                <button class="category-btn active" onclick="filterTools('all')">All Tools</button>
+                <button class="category-btn" onclick="filterTools('internal')">Internal Systems</button>
+                <button class="category-btn" onclick="filterTools('analytics')">Analytics</button>
+                <button class="category-btn" onclick="filterTools('communication')">Communication</button>
+                <button class="category-btn" onclick="filterTools('project')">Project Management</button>
+                <button class="category-btn" onclick="filterTools('development')">Development</button>
+            </div>
+
+            <!-- Internal Systems -->
+            <section class="tools-section" data-category="internal">
+                <h2 class="section-title">Internal Systems</h2>
+                <div class="tools-grid">
+                    <a href="index.html" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">🏢</div>
+                            <h3 class="tool-name">Company Portal</h3>
+                        </div>
+                        <p class="tool-description">Main Borel Sigma Inc. website and information hub</p>
+                        <ul class="tool-features">
+                            <li>Company overview</li>
+                            <li>Services information</li>
+                            <li>Contact details</li>
+                        </ul>
+                        <span class="tool-status status-active">Active</span>
+                    </a>
+
+                    <a href="services.html" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">📋</div>
+                            <h3 class="tool-name">Services Catalog</h3>
+                        </div>
+                        <p class="tool-description">Complete listing of all Borel Sigma services</p>
+                        <ul class="tool-features">
+                            <li>Change Management</li>
+                            <li>Strategic Planning</li>
+                            <li>Consulting Services</li>
+                        </ul>
+                        <span class="tool-status status-active">Active</span>
+                    </a>
+
+                    <a href="case-studies.html" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">📊</div>
+                            <h3 class="tool-name">Case Studies</h3>
+                        </div>
+                        <p class="tool-description">Success stories and transformation examples</p>
+                        <ul class="tool-features">
+                            <li>14 Sector coverage</li>
+                            <li>Transformation metrics</li>
+                            <li>Methodology showcase</li>
+                        </ul>
+                        <span class="tool-status status-active">Active</span>
+                    </a>
+
+                    <a href="defense-solutions.html" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">🛡️</div>
+                            <h3 class="tool-name">Defense Solutions</h3>
+                        </div>
+                        <p class="tool-description">Specialized defense sector frameworks and solutions</p>
+                        <ul class="tool-features">
+                            <li>13 Turnkey frameworks</li>
+                            <li>Partner ecosystem</li>
+                            <li>Compliance tracking</li>
+                        </ul>
+                        <span class="tool-status status-active">Active</span>
+                    </a>
+
+                    <a href="bzurnteor-portal.html" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">🔒</div>
+                            <h3 class="tool-name">Client Portal</h3>
+                        </div>
+                        <p class="tool-description">Secure client access portal (Bzurnteor Ltd example)</p>
+                        <ul class="tool-features">
+                            <li>Project tracking</li>
+                            <li>Document management</li>
+                            <li>Security clearance</li>
+                        </ul>
+                        <span class="tool-status status-active">Secure Access</span>
+                    </a>
+
+                    <a href="team-dashboard.html" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">👥</div>
+                            <h3 class="tool-name">Team Dashboard</h3>
+                        </div>
+                        <p class="tool-description">Employee portal and performance tracking</p>
+                        <ul class="tool-features">
+                            <li>KPI tracking</li>
+                            <li>File sharing</li>
+                            <li>Analytics</li>
+                        </ul>
+                        <span class="tool-status status-active">Active</span>
+                    </a>
+
+                    <a href="timeline.html" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">📅</div>
+                            <h3 class="tool-name">Timeline & Tasks</h3>
+                        </div>
+                        <p class="tool-description">90-day transformation timeline and task management</p>
+                        <ul class="tool-features">
+                            <li>Daily schedule</li>
+                            <li>Task assignments</li>
+                            <li>Progress tracking</li>
+                        </ul>
+                        <span class="tool-status status-active">Active</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Analytics Tools -->
+            <section class="tools-section" data-category="analytics">
+                <h2 class="section-title">Analytics & Business Intelligence</h2>
+                <div class="tools-grid">
+                    <a href="https://analytics.google.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">📈</div>
+                            <h3 class="tool-name">Google Analytics</h3>
+                        </div>
+                        <p class="tool-description">Web traffic and user behavior analysis</p>
+                        <ul class="tool-features">
+                            <li>Real-time data</li>
+                            <li>Audience insights</li>
+                            <li>Conversion tracking</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+
+                    <a href="https://app.powerbi.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">📊</div>
+                            <h3 class="tool-name">Power BI</h3>
+                        </div>
+                        <p class="tool-description">Advanced business intelligence and reporting</p>
+                        <ul class="tool-features">
+                            <li>Interactive dashboards</li>
+                            <li>Data visualization</li>
+                            <li>Automated reports</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+
+                    <a href="https://tableau.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">📉</div>
+                            <h3 class="tool-name">Tableau</h3>
+                        </div>
+                        <p class="tool-description">Data visualization and analytics platform</p>
+                        <ul class="tool-features">
+                            <li>Visual analytics</li>
+                            <li>Data blending</li>
+                            <li>Real-time updates</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Communication Tools -->
+            <section class="tools-section" data-category="communication">
+                <h2 class="section-title">Communication & Collaboration</h2>
+                <div class="tools-grid">
+                    <a href="https://slack.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">💬</div>
+                            <h3 class="tool-name">Slack</h3>
+                        </div>
+                        <p class="tool-description">Team communication and collaboration hub</p>
+                        <ul class="tool-features">
+                            <li>Instant messaging</li>
+                            <li>File sharing</li>
+                            <li>Integration hub</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+
+                    <a href="https://teams.microsoft.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">👥</div>
+                            <h3 class="tool-name">Microsoft Teams</h3>
+                        </div>
+                        <p class="tool-description">Video conferencing and collaboration</p>
+                        <ul class="tool-features">
+                            <li>Video calls</li>
+                            <li>Screen sharing</li>
+                            <li>Team channels</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+
+                    <a href="https://outlook.office.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">📧</div>
+                            <h3 class="tool-name">Outlook</h3>
+                        </div>
+                        <p class="tool-description">Email and calendar management</p>
+                        <ul class="tool-features">
+                            <li>Email management</li>
+                            <li>Calendar scheduling</li>
+                            <li>Contact management</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Project Management -->
+            <section class="tools-section" data-category="project">
+                <h2 class="section-title">Project Management</h2>
+                <div class="tools-grid">
+                    <a href="https://jira.atlassian.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">🎯</div>
+                            <h3 class="tool-name">Jira</h3>
+                        </div>
+                        <p class="tool-description">Agile project management and issue tracking</p>
+                        <ul class="tool-features">
+                            <li>Sprint planning</li>
+                            <li>Issue tracking</li>
+                            <li>Agile boards</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+
+                    <a href="https://app.hubspot.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">🎯</div>
+                            <h3 class="tool-name">HubSpot CRM</h3>
+                        </div>
+                        <p class="tool-description">Customer relationship management platform</p>
+                        <ul class="tool-features">
+                            <li>Contact management</li>
+                            <li>Sales pipeline</li>
+                            <li>Marketing automation</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+
+                    <a href="https://salesforce.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">☁️</div>
+                            <h3 class="tool-name">Salesforce</h3>
+                        </div>
+                        <p class="tool-description">Enterprise CRM and sales platform</p>
+                        <ul class="tool-features">
+                            <li>Lead management</li>
+                            <li>Opportunity tracking</li>
+                            <li>Analytics</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+
+                    <a href="https://calendar.google.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">📅</div>
+                            <h3 class="tool-name">Google Calendar</h3>
+                        </div>
+                        <p class="tool-description">Schedule management and meeting coordination</p>
+                        <ul class="tool-features">
+                            <li>Event scheduling</li>
+                            <li>Meeting rooms</li>
+                            <li>Reminders</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Development Tools -->
+            <section class="tools-section" data-category="development">
+                <h2 class="section-title">Development & DevOps</h2>
+                <div class="tools-grid">
+                    <a href="https://github.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">🐙</div>
+                            <h3 class="tool-name">GitHub</h3>
+                        </div>
+                        <p class="tool-description">Code repository and version control</p>
+                        <ul class="tool-features">
+                            <li>Git repositories</li>
+                            <li>Code review</li>
+                            <li>CI/CD pipelines</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+
+                    <a href="https://aws.amazon.com" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">☁️</div>
+                            <h3 class="tool-name">AWS Console</h3>
+                        </div>
+                        <p class="tool-description">Cloud infrastructure management</p>
+                        <ul class="tool-features">
+                            <li>EC2 instances</li>
+                            <li>S3 storage</li>
+                            <li>Lambda functions</li>
+                        </ul>
+                        <span class="tool-status status-active">External</span>
+                    </a>
+
+                    <a href="https://jenkins.io" target="_blank" class="tool-card">
+                        <div class="tool-header">
+                            <div class="tool-icon">🔧</div>
+                            <h3 class="tool-name">Jenkins</h3>
+                        </div>
+                        <p class="tool-description">Continuous integration and deployment</p>
+                        <ul class="tool-features">
+                            <li>Build automation</li>
+                            <li>Testing pipelines</li>
+                            <li>Deployment automation</li>
+                        </ul>
+                        <span class="tool-status status-beta">Beta</span>
+                    </a>
+
+                    <a href="#" class="tool-card" style="opacity: 0.7;">
+                        <div class="tool-header">
+                            <div class="tool-icon">🐳</div>
+                            <h3 class="tool-name">Docker Hub</h3>
+                        </div>
+                        <p class="tool-description">Container registry and management</p>
+                        <ul class="tool-features">
+                            <li>Container images</li>
+                            <li>Registry management</li>
+                            <li>Automated builds</li>
+                        </ul>
+                        <span class="tool-status status-coming">Coming Soon</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- API Documentation -->
+            <div class="api-section">
+                <h2 style="font-size: 1.8rem; font-weight: 400; margin-bottom: 1rem;">API Access</h2>
+                <p style="margin-bottom: 1.5rem;">For developers integrating with our systems, use the following endpoints:</p>
+                
+                <h3 style="font-size: 1.4rem; margin-bottom: 0.8rem;">File Upload API</h3>
+                <div class="api-endpoint">
+                    POST https://script.google.com/macros/s/AKfycbwwicPGIc8leTdFNlvU4IrMmI3ARwd3_s9oPcJlGK1GbdgwXvRZMUaHIsmpEHtR43iL/exec
+                </div>
+                
+                <h3 style="font-size: 1.4rem; margin-bottom: 0.8rem;">Authentication</h3>
+                <div class="api-endpoint">
+                    Headers: { "Authorization": "Bearer YOUR_TOKEN" }
+                </div>
+                
+                <p style="margin-top: 1.5rem; color: var(--gray-600);">
+                    For API documentation and access tokens, contact the IT department.
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Session Management
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check login status
+            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+                const params = new URLSearchParams(window.location.search);
+                if (!params.has('email')) {
+                    window.location.href = 'team-login.html';
+                    return;
+                }
+                sessionStorage.setItem('isLoggedIn', 'true');
+            }
+            
+            // Get URL parameters
+            const params = new URLSearchParams(window.location.search);
+            
+            // Update all navigation links with parameters
+            const links = [
+                { id: 'dashboard-link', href: 'team-dashboard.html' },
+                { id: 'timeline-link', href: 'timeline.html' },
+                { id: 'my-files-link', href: 'my-files.html' }
+            ];
+            
+            links.forEach(link => {
+                const element = document.getElementById(link.id);
+                if (element && params.toString()) {
+                    element.href = `${link.href}?${params.toString()}`;
+                }
+            });
+            
+            // Update quick action links
+            const quickLinks = document.querySelectorAll('.action-btn');
+            quickLinks.forEach(link => {
+                if (link.href.includes('.html') && params.toString()) {
+                    const url = new URL(link.href);
+                    link.href = `${url.pathname}?${params.toString()}`;
+                }
+            });
+            
+            // Logout functionality
+            document.getElementById('logout-link').addEventListener('click', () => {
+                sessionStorage.removeItem('isLoggedIn');
+            });
+        });
+
+        // Filter tools by category
+        function filterTools(category) {
+            // Update active button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show/hide sections
+            const sections = document.querySelectorAll('.tools-section');
+            sections.forEach(section => {
+                if (category === 'all' || section.getAttribute('data-category') === category) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        // New task modal placeholder
+        function showNewTaskModal() {
+            alert('New task creation modal - to be implemented');
+        }
+    </script>
+</body>
+</html>

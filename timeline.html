@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline & Tasks | Borel Sigma Inc.</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500&display=swap');
+        
+        :root {
+            --primary: #000000;
+            --secondary: #1a1a1a;
+            --accent: #0066ff;
+            --danger: #ff3366;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 62.5%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Calibri Light', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 300;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--primary);
+            background: var(--gray-100);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .top-nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            height: 28px;
+        }
+
+        .page-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: var(--accent);
+            color: white;
+            border-radius: 2rem;
+            font-size: 1rem;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-wrapper {
+            display: flex;
+            margin-top: 60px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            min-height: calc(100vh - 60px);
+            position: fixed;
+            padding: 2rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 0.4rem;
+            text-decoration: none;
+            color: var(--gray-700);
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .sidebar-nav svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 3rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 3.2rem;
+            font-weight: 200;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.4rem;
+            color: var(--gray-600);
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.8rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .filter-label {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+        }
+
+        .filter-select {
+            padding: 0.6rem 1.2rem;
+            font-size: 1.1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.4rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Timeline View Toggle */
+        .view-toggle {
+            display: flex;
+            background: var(--gray-100);
+            border-radius: 0.4rem;
+            padding: 0.3rem;
+            margin-left: auto;
+        }
+
+        .view-btn {
+            padding: 0.6rem 1.2rem;
+            font-size: 1.1rem;
+            background: transparent;
+            border: none;
+            border-radius: 0.3rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .view-btn.active {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Main Grid Layout */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Calendar Container */
+        .calendar-container {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.8rem;
+            padding: 2rem;
+        }
+
+        #calendar {
+            height: 600px;
+        }
+
+        /* Task List */
+        .task-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.8rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.6rem;
+            font-weight: 400;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Today's Schedule */
+        .schedule-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-time {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            min-width: 80px;
+        }
+
+        .schedule-content {
+            flex: 1;
+        }
+
+        .schedule-title {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 0.3rem;
+        }
+
+        .schedule-description {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+        }
+
+        .schedule-tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.9rem;
+            border-radius: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag-work {
+            background: var(--accent);
+            color: white;
+        }
+
+        .tag-meeting {
+            background: var(--purple);
+            color: white;
+        }
+
+        .tag-research {
+            background: var(--success);
+            color: white;
+        }
+
+        .tag-personal {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* Task List */
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.4rem;
+            margin-bottom: 0.8rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .task-item:hover {
+            background: var(--gray-50);
+            transform: translateX(4px);
+        }
+
+        .task-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--gray-400);
+            border-radius: 0.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .task-checkbox.checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .task-meta {
+            font-size: 1rem;
+            color: var(--gray-600);
+        }
+
+        .task-priority {
+            padding: 0.3rem 0.8rem;
+            font-size: 1rem;
+            border-radius: 0.3rem;
+            font-weight: 500;
+        }
+
+        .priority-high {
+            background: var(--danger);
+            color: white;
+        }
+
+        .priority-medium {
+            background: var(--warning);
+            color: white;
+        }
+
+        .priority-low {
+            background: var(--gray-400);
+            color: white;
+        }
+
+        /* Communication Panel */
+        .comm-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .comm-tab {
+            padding: 0.8rem 1.5rem;
+            font-size: 1.2rem;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .comm-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .comm-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--danger);
+            color: white;
+            font-size: 0.9rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 1rem;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .comm-list {
+            list-style: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .comm-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .comm-item:hover {
+            background: var(--gray-50);
+        }
+
+        .comm-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .comm-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .comm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+        }
+
+        .comm-name {
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+        .comm-time {
+            font-size: 1rem;
+            color: var(--gray-600);
+        }
+
+        .comm-preview {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.8rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.4rem;
+            font-weight: 300;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+        }
+
+        /* Gantt Chart Container */
+        .gantt-container {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.8rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            overflow-x: auto;
+        }
+
+        /* Integration Links */
+        .integration-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.8rem;
+        }
+
+        .integration-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 0.4rem;
+            text-decoration: none;
+            color: var(--primary);
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
+
+        .integration-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 400;
+            border: 1px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            letter-spacing: 0.02em;
+            border-radius: 0.2rem;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            border-color: var(--secondary);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .timeline-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 2rem;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .view-toggle {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="top-nav-content">
+            <div class="brand-section">
+                <a href="index.html"><img src="BorelLogo.jpg" alt="Borel Sigma Inc Logo" class="logo"></a>
+                <div class="page-indicator">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                    </svg>
+                    Timeline & Tasks
+                </div>
+            </div>
+            <div class="nav-actions">
+                <div class="user-info">
+                    <span id="current-date" style="margin-right: 1rem; color: var(--gray-600);"></span>
+                    <button class="btn btn-primary btn-sm" onclick="showNewTaskModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        New Task
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav>
+                <ul class="sidebar-nav">
+                    <li>
+                        <a href="team-dashboard.html">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="active">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>Timeline</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="my-files.html" id="my-files-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                            </svg>
+                            <span>My Files</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#tools">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Tools</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="team-login.html" id="logout-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            <span>Log Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <header class="page-header">
+                <h1>Timeline & Task Management</h1>
+                <p>Manage your daily schedule, tasks, and team collaboration</p>
+            </header>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Tasks Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Meetings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Deadlines</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">89%</div>
+                    <div class="stat-label">Completion Rate</div>
+                </div>
+            </div>
+
+            <!-- Integration Bar -->
+            <div class="integration-bar">
+                <a href="https://jira.atlassian.com" target="_blank" class="integration-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.53 2c0 2.4 1.97 4.35 4.35 4.35h1.78v1.7c0 2.4 1.94 4.35 4.34 4.35-2.4 0-4.35 1.95-4.35 4.35v1.78h-1.78c-2.38.02-4.33 1.95-4.33 4.35 0-2.4-1.95-4.35-4.35-4.35h-1.8v-1.78c0-2.4-1.94-4.34-4.34-4.34 2.4 0 4.35-1.95 4.35-4.35V6.35h1.78c2.4 0 4.35-1.94 4.35-4.35z"/>
+                    </svg>
+                    Jira Sync
+                </a>
+                <a href="https://teams.microsoft.com" target="_blank" class="integration-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/>
+                    </svg>
+                    MS Teams
+                </a>
+                <a href="https://calendar.google.com" target="_blank" class="integration-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                    </svg>
+                    Google Calendar
+                </a>
+                <a href="https://outlook.office.com" target="_blank" class="integration-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                    Outlook
+                </a>
+                <a href="https://slack.com" target="_blank" class="integration-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                    </svg>
+                    Slack
+                </a>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label class="filter-label">Phase:</label>
+                    <select class="filter-select" id="phaseFilter">
+                        <option value="all">All Phases</option>
+                        <option value="phase1">Phase 1: Foundation (Aug 1-21)</option>
+                        <option value="phase2">Phase 2: Partner SLAs (Aug 22-Sep 11)</option>
+                        <option value="phase3">Phase 3: R&D Transfers (Sep 12-Oct 9)</option>
+                        <option value="phase4">Phase 4: Testing & Launch (Oct 10-31)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Category:</label>
+                    <select class="filter-select" id="categoryFilter">
+                        <option value="all">All Categories</option>
+                        <option value="work">Work Meetings</option>
+                        <option value="marketing">Marketing & PR</option>
+                        <option value="research">Research & DevOps</option>
+                        <option value="reading">Reading & Learning</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Status:</label>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="all">All Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="pending">Pending</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="switchView('calendar')">Calendar</button>
+                    <button class="view-btn" onclick="switchView('timeline')">Timeline</button>
+                    <button class="view-btn" onclick="switchView('gantt')">Gantt</button>
+                </div>
+            </div>
+
+            <!-- Main Timeline Grid -->
+            <div class="timeline-grid">
+                <!-- Calendar/Timeline View -->
+                <div class="calendar-container" id="calendarView">
+                    <div id="calendar"></div>
+                </div>
+
+                <!-- Task Panel -->
+                <div class="task-panel">
+                    <!-- Today's Schedule -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Today's Schedule</h2>
+                            <span class="btn btn-sm">Day <span id="currentDay">15</span> of 90</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="schedule-item">
+                                <div class="schedule-time">5:00 AM</div>
+                                <div class="schedule-content">
+                                    <div class="schedule-title">Wake & Breakfast</div>
+                                    <div class="schedule-description">Veg Keto: Boiled eggs with veggies (~500 cal)</div>
+                                    <span class="schedule-tag tag-personal">Personal</span>
+                                </div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="schedule-time">6-9 AM</div>
+                                <div class="schedule-content">
+                                    <div class="schedule-title">Reading Session</div>
+                                    <div class="schedule-description">Banking compliance in EU/India (3 hours)</div>
+                                    <span class="schedule-tag tag-research">Learning</span>
+                                </div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="schedule-time">9-12 AM</div>
+                                <div class="schedule-content">
+                                    <div class="schedule-title">Work Meeting</div>
+                                    <div class="schedule-description">Delegate E on banking financials; D on compliance (2 hours)</div>
+                                    <span class="schedule-tag tag-work">Professional</span>
+                                </div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="schedule-time">1-4 PM</div>
+                                <div class="schedule-content">
+                                    <div class="schedule-title">Marketing & PR</div>
+                                    <div class="schedule-description">Market banking setups to partners; prepare PR on efficiencies</div>
+                                    <span class="schedule-tag tag-meeting">Marketing</span>
+                                </div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="schedule-time">5-10 PM</div>
+                                <div class="schedule-content">
+                                    <div class="schedule-title">Complex Applications & Research</div>
+                                    <div class="schedule-description">Financial complexities for transfers; DevOps: AWS EC2 (1 hour)</div>
+                                    <span class="schedule-tag tag-research">Research</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Tasks -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Active Tasks</h2>
+                            <button class="btn btn-sm">View All</button>
+                        </div>
+                        <div class="card-body">
+                            <ul class="task-list">
+                                <li class="task-item">
+                                    <div class="task-checkbox"></div>
+                                    <div class="task-content">
+                                        <div class="task-title">Submit SCRM compliance documentation</div>
+                                        <div class="task-meta">Due: March 15, 2025 | Assigned to: Team A</div>
+                                    </div>
+                                    <span class="task-priority priority-high">High</span>
+                                </li>
+                                <li class="task-item">
+                                    <div class="task-checkbox"></div>
+                                    <div class="task-content">
+                                        <div class="task-title">Review Phase 2 with Borel Sigma team</div>
+                                        <div class="task-meta">Due: Tomorrow | Assigned to: You</div>
+                                    </div>
+                                    <span class="task-priority priority-medium">Medium</span>
+                                </li>
+                                <li class="task-item">
+                                    <div class="task-checkbox checked"></div>
+                                    <div class="task-content">
+                                        <div class="task-title">Complete DAP 2020 compliance setup</div>
+                                        <div class="task-meta">Completed: Feb 28, 2025</div>
+                                    </div>
+                                    <span class="task-priority priority-low">Low</span>
+                                </li>
+                                <li class="task-item">
+                                    <div class="task-checkbox"></div>
+                                    <div class="task-content">
+                                        <div class="task-title">Banking compliance delegation to Team E</div>
+                                        <div class="task-meta">Due: Today 5 PM | Assigned to: You</div>
+                                    </div>
+                                    <span class="task-priority priority-high">High</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Communications -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Communications</h2>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            <div class="comm-tabs">
+                                <button class="comm-tab active" onclick="switchCommTab('calls')">
+                                    Calls
+                                    <span class="comm-badge">3</span>
+                                </button>
+                                <button class="comm-tab" onclick="switchCommTab('messages')">
+                                    Messages
+                                    <span class="comm-badge">12</span>
+                                </button>
+                                <button class="comm-tab" onclick="switchCommTab('emails')">
+                                    Emails
+                                    <span class="comm-badge">8</span>
+                                </button>
+                            </div>
+                            <ul class="comm-list" id="commList">
+                                <li class="comm-item">
+                                    <div class="comm-avatar">MB</div>
+                                    <div class="comm-content">
+                                        <div class="comm-header">
+                                            <span class="comm-name">MB (Partner)</span>
+                                            <span class="comm-time">10:30 AM</span>
+                                        </div>
+                                        <div class="comm-preview">Review vision meeting scheduled for tomorrow</div>
+                                    </div>
+                                </li>
+                                <li class="comm-item">
+                                    <div class="comm-avatar">VJ</div>
+                                    <div class="comm-content">
+                                        <div class="comm-header">
+                                            <span class="comm-name">VJ (Tech Lead)</span>
+                                            <span class="comm-time">9:15 AM</span>
+                                        </div>
+                                        <div class="comm-preview">Prototype integration updates ready</div>
+                                    </div>
+                                </li>
+                                <li class="comm-item">
+                                    <div class="comm-avatar">KS</div>
+                                    <div class="comm-content">
+                                        <div class="comm-header">
+                                            <span class="comm-name">KS (DevOps)</span>
+                                            <span class="comm-time">Yesterday</span>
+                                        </div>
+                                        <div class="comm-preview">AWS EC2 setup documentation shared</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Overview -->
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2>90-Day Defense Startup Transformation Progress</h2>
+                    <span style="color: var(--accent); font-size: 1.2rem;">Day 15 of 90 (16.7% Complete)</span>
+                </div>
+                <div class="card-body">
+                    <div style="background: var(--gray-200); height: 20px; border-radius: 10px; overflow: hidden; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(to right, var(--success) 0%, var(--success) 16.7%, var(--gray-300) 16.7%); height: 100%; position: relative;">
+                            <div style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: white; font-size: 1.1rem; font-weight: 500;">16.7%</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phase Progress Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;">
+                        <div style="text-align: center;">
+                            <h4 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Phase 1: Foundation</h4>
+                            <div style="background: var(--gray-200); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
+                                <div style="background: var(--success); width: 75%; height: 100%;"></div>
+                            </div>
+                            <span style="color: var(--gray-600); font-size: 1.1rem;">75% Complete</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <h4 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Phase 2: Partner SLAs</h4>
+                            <div style="background: var(--gray-200); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
+                                <div style="background: var(--warning); width: 0%; height: 100%;"></div>
+                            </div>
+                            <span style="color: var(--gray-600); font-size: 1.1rem;">Starting Aug 22</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <h4 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Phase 3: R&D Transfers</h4>
+                            <div style="background: var(--gray-200); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
+                                <div style="background: var(--gray-400); width: 0%; height: 100%;"></div>
+                            </div>
+                            <span style="color: var(--gray-600); font-size: 1.1rem;">Starting Sep 12</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <h4 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Phase 4: Testing & Launch</h4>
+                            <div style="background: var(--gray-200); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 0.5rem;">
+                                <div style="background: var(--gray-400); width: 0%; height: 100%;"></div>
+                            </div>
+                            <span style="color: var(--gray-600); font-size: 1.1rem;">Starting Oct 10</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Task Breakdown -->
+            <div class="gantt-container">
+                <h2 style="font-size: 2rem; font-weight: 400; margin-bottom: 2rem;">Current Phase Tasks & Assignments</h2>
+                
+                <div style="display: grid; gap: 1.5rem;">
+                    <!-- Team Delegation Overview -->
+                    <div style="background: var(--gray-100); padding: 2rem; border-radius: 0.8rem;">
+                        <h3 style="font-size: 1.6rem; margin-bottom: 1.5rem;">Team Assignments - Phase 1</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div>
+                                <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Team A</h4>
+                                <ul style="list-style: none; font-size: 1.1rem; color: var(--gray-700);">
+                                    <li>• SOPs Development</li>
+                                    <li>• MoU Strategy</li>
+                                    <li>• Innovation Risks</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--purple); margin-bottom: 0.5rem;">Team B</h4>
+                                <ul style="list-style: none; font-size: 1.1rem; color: var(--gray-700);">
+                                    <li>• Risk Assessment</li>
+                                    <li>• IP Protection</li>
+                                    <li>• Software Integration</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--success); margin-bottom: 0.5rem;">Team C</h4>
+                                <ul style="list-style: none; font-size: 1.1rem; color: var(--gray-700);">
+                                    <li>• e-Residency Timeline</li>
+                                    <li>• Virtual Office Ops</li>
+                                    <li>• Hardware Integration</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--warning); margin-bottom: 0.5rem;">Team D</h4>
+                                <ul style="list-style: none; font-size: 1.1rem; color: var(--gray-700);">
+                                    <li>• Documentation</li>
+                                    <li>• Legal Compliance</li>
+                                    <li>• MoU Clauses</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--danger); margin-bottom: 0.5rem;">Team E</h4>
+                                <ul style="list-style: none; font-size: 1.1rem; color: var(--gray-700);">
+                                    <li>• Financial Modeling</li>
+                                    <li>• Budget Management</li>
+                                    <li>• Banking Setup</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Key Milestones -->
+                    <div style="background: white; border: 1px solid var(--gray-200); padding: 2rem; border-radius: 0.8rem;">
+                        <h3 style="font-size: 1.6rem; margin-bottom: 1.5rem;">Upcoming Milestones</h3>
+                        <div style="display: grid; gap: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 1.5rem; padding: 1rem; background: var(--gray-50); border-radius: 0.4rem;">
+                                <div style="width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500;">Aug 21</div>
+                                <div>
+                                    <h4 style="font-size: 1.3rem; margin-bottom: 0.3rem;">Phase 1 Completion</h4>
+                                    <p style="color: var(--gray-600); font-size: 1.1rem;">MoUs finalized, Registration complete, SOPs approved</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1.5rem; padding: 1rem; background: var(--gray-50); border-radius: 0.4rem;">
+                                <div style="width: 60px; height: 60px; background: var(--purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500;">Sep 11</div>
+                                <div>
+                                    <h4 style="font-size: 1.3rem; margin-bottom: 0.3rem;">Phase 2 Completion</h4>
+                                    <p style="color: var(--gray-600); font-size: 1.1rem;">Partner SLAs signed, Compliance setup, SOPs implemented</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1.5rem; padding: 1rem; background: var(--gray-50); border-radius: 0.4rem;">
+                                <div style="width: 60px; height: 60px; background: var(--success); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500;">Oct 9</div>
+                                <div>
+                                    <h4 style="font-size: 1.3rem; margin-bottom: 0.3rem;">Phase 3 Completion</h4>
+                                    <p style="color: var(--gray-600); font-size: 1.1rem;">R&D transfers complete, Prototypes ready, Grants submitted</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1.5rem; padding: 1rem; background: var(--gray-50); border-radius: 0.4rem;">
+                                <div style="width: 60px; height: 60px; background: var(--warning); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500;">Oct 31</div>
+                                <div>
+                                    <h4 style="font-size: 1.3rem; margin-bottom: 0.3rem;">Launch Day</h4>
+                                    <p style="color: var(--gray-600); font-size: 1.1rem;">Testing complete, Compliance certified, Product launch</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Session Management
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check login status
+            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+                const params = new URLSearchParams(window.location.search);
+                if (!params.has('email')) {
+                    window.location.href = 'team-login.html';
+                    return;
+                }
+                sessionStorage.setItem('isLoggedIn', 'true');
+            }
+            
+            // Get URL parameters
+            const params = new URLSearchParams(window.location.search);
+            const email = params.get('email') || 'team.member@borelsigma.inc';
+            
+            // Update navigation links with parameters
+            const dashboardLink = document.querySelector('a[href="team-dashboard.html"]');
+            if (dashboardLink && params.toString()) {
+                dashboardLink.href = `team-dashboard.html?${params.toString()}`;
+            }
+            
+            const myFilesLink = document.querySelector('a[href="my-files.html"]');
+            if (myFilesLink && params.toString()) {
+                myFilesLink.href = `my-files.html?${params.toString()}`;
+            }
+            
+            const toolsLink = document.querySelector('a[href="#tools"]');
+            if (toolsLink) {
+                toolsLink.href = `tools.html?${params.toString()}`;
+            }
+            
+            // Logout functionality
+            document.getElementById('logout-link').addEventListener('click', () => {
+                sessionStorage.removeItem('isLoggedIn');
+            });
+        });
+
+        // Initialize current date
+        const currentDate = new Date();
+        document.getElementById('current-date').textContent = currentDate.toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+
+        // Calculate current day in 90-day timeline (starting from Aug 1)
+        const startDate = new Date('2025-08-01');
+        const daysPassed = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
+        const currentDay = Math.max(1, Math.min(90, daysPassed + 1));
+        document.getElementById('currentDay').textContent = currentDay;
+
+        // Initialize Calendar
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- THIS IS THE FIX ---
+            // This script block ensures your session is maintained across pages.
+            const params = new URLSearchParams(window.location.search);
+            
+            // 1. Check if the user is logged in
+            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+                if (!params.has('email')) { // If no session and no email in URL, force login
+                    window.location.href = 'team-login.html';
+                    return;
+                }
+                sessionStorage.setItem('isLoggedIn', 'true'); // Establish session
+            }
+
+            // 2. Dynamically update all sidebar links to carry the session forward
+            const sessionQueryString = params.toString();
+            if (sessionQueryString) {
+                document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                    const originalHref = link.getAttribute('href');
+                    if (originalHref && originalHref !== '#' && !originalHref.startsWith('http')) {
+                        link.href = `${originalHref}?${sessionQueryString}`;
+                    }
+                });
+            }
+            
+            // --- END OF FIX ---
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [
+                    // Phase 1 Events
+                    {
+                        title: '5AM: Wake & Breakfast',
+                        start: '2025-08-15T05:00:00',
+                        end: '2025-08-15T06:00:00',
+                        color: '#f59e0b'
+                    },
+                    {
+                        title: 'Reading: Banking Compliance',
+                        start: '2025-08-15T06:00:00',
+                        end: '2025-08-15T09:00:00',
+                        color: '#8b5cf6'
+                    },
+                    {
+                        title: 'Work Meeting: Banking Delegation',
+                        start: '2025-08-15T09:00:00',
+                        end: '2025-08-15T12:00:00',
+                        color: '#0066ff'
+                    },
+                    {
+                        title: 'Marketing: Banking PR',
+                        start: '2025-08-15T13:00:00',
+                        end: '2025-08-15T16:00:00',
+                        color: '#10b981'
+                    },
+                    {
+                        title: 'Research: Financial Complexities',
+                        start: '2025-08-15T17:00:00',
+                        end: '2025-08-15T22:00:00',
+                        color: '#ff3366'
+                    },
+                    // Add more events based on the 90-day schedule
+                    {
+                        title: 'SCRM Compliance Due',
+                        start: '2025-03-15',
+                        allDay: true,
+                        color: '#ff3366'
+                    },
+                    {
+                        title: 'Phase 2 Review',
+                        start: '2025-08-22',
+                        allDay: true,
+                        color: '#0066ff'
+                    }
+                ]
+            });
+            calendar.render();
+        });
+
+        // Task checkbox functionality
+        document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('click', function() {
+                this.classList.toggle('checked');
+                // Update task status in backend
+            });
+        });
+
+        // Communication tab switching
+        function switchCommTab(tab) {
+            document.querySelectorAll('.comm-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update communication list based on tab
+            const commList = document.getElementById('commList');
+            // This would be populated with actual data from backend
+        }
+
+        // View switching
+        function switchView(view) {
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide appropriate view
+            if (view === 'calendar') {
+                document.getElementById('calendarView').style.display = 'block';
+            } else if (view === 'timeline') {
+                // Show timeline view
+            } else if (view === 'gantt') {
+                // Show gantt chart
+            }
+        }
+
+        // Filter functionality
+        document.getElementById('phaseFilter').addEventListener('change', function() {
+            // Filter tasks and calendar events by phase
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', function() {
+            // Filter by category
+        });
+
+        document.getElementById('statusFilter').addEventListener('change', function() {
+            // Filter by status
+        });
+
+        // New task modal
+        function showNewTaskModal() {
+            // Implement task creation modal
+            alert('Task creation modal - to be implemented');
+        }
+    </script>
+</body>
+</html>
